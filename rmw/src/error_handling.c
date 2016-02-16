@@ -57,7 +57,7 @@ rmw_set_error_state(const char * error_string, const char * file, size_t line_nu
   __rmw_error_state->message = (char *)malloc(error_string_length + 1);
   if (!__rmw_error_state->message) {
 #if RMW_REPORT_ERROR_HANDLING_ERRORS
-    // rmw_allocate failed, but fwrite might work?
+    // malloc failed, but fwrite might work?
     SAFE_FWRITE_TO_STDERR(
       "[rmw|error_handling.c:" RMW_STRINGIFY(__LINE__)
       "] failed to allocate memory for the error message in the error state struct\n");
