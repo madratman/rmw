@@ -38,15 +38,10 @@ __rmw_reset_error(rmw_error_state_t * error_state);
 void
 rmw_set_error_state(const char * error_string, const char * file, size_t line_number)
 {
-  if (rmw_error_is_set()) {
+  rmw_error_state_t * old_error_state = __rmw_error_state;
 #if RMW_REPORT_ERROR_HANDLING_ERRORS
-    fprintf(
-      stderr,
-      "[rmw|error_handling.c:" RMW_STRINGIFY(__LINE__) "] error string being overwritten: %s\n",
-      rmw_get_error_string_safe());
+  const char * old_error_string = rmw_get_error_string_safe();
 #endif
-    rmw_reset_error();
-  }
   __rmw_error_state = (rmw_error_state_t *)rmw_allocate(sizeof(rmw_error_state_t));
   if (!__rmw_error_state) {
 #if RMW_REPORT_ERROR_HANDLING_ERRORS
@@ -86,6 +81,17 @@ rmw_set_error_state(const char * error_string, const char * file, size_t line_nu
 #endif
   __rmw_error_state->file = file;
   __rmw_error_state->line_number = line_number;
+  if (__rmw_error_is_set(old_error_state)) {
+#if RMW_REPORT_ERROR_HANDLING_ERRORS
+    if (error_string == old_error_string || error_string == old_error_state->message) {
+      fprintf(
+        stderr,
+        "[rmw|error_handling.c:" RMW_STRINGIFY(__LINE__) "] error string being overwritten: %s\n",
+        old_error_string);
+    }
+#endif
+    __rmw_reset_error(old_error_state);
+  }
 }
 
 const rmw_error_state_t *
