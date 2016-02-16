@@ -83,7 +83,8 @@ rmw_set_error_state(const char * error_string, const char * file, size_t line_nu
   __rmw_error_state->line_number = line_number;
   if (__rmw_error_is_set(old_error_state)) {
 #if RMW_REPORT_ERROR_HANDLING_ERRORS
-    if (error_string == old_error_string || error_string == old_error_state->message) {
+    // Only warn of overwritting if the new error string is different from the old ones.
+    if (error_string != old_error_string && error_string != old_error_state->message) {
       fprintf(
         stderr,
         "[rmw|error_handling.c:" RMW_STRINGIFY(__LINE__) "] error string being overwritten: %s\n",
