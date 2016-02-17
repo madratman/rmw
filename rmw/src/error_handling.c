@@ -176,5 +176,5 @@ __rmw_reset_error(rmw_error_state_t * error_state)
 void
 rmw_reset_error()
 {
-  return __rmw_reset_error(__rmw_error_state);
+  __rmw_reset_error(__rmw_error_state);
 }
